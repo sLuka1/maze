@@ -1,7 +1,8 @@
 var canvas = document.getElementById("mazeC");
 var ctx = canvas.getContext("2d");
-var player = { x: 230, y: 3, width: 12, height: 12, speed: 1 };
-var timer = { seconds: 50, intervalId: null };
+var player = { x: 228, y: 0, width: 12, height: 12, speed: 1 };
+var timer = { seconds: 120, intervalId: null };
+var finish = { x: 240, y: 475 }
 var left = false;
 var up = false;
 var right = false;
@@ -449,7 +450,9 @@ function drawLine(x1, y1, x2, y2) {
 
 function drawPlayer() {
     ctx.fillStyle = "blue";
-    ctx.fillRect(player.x, player.y, player.width, player.height);
+    ctx.beginPath();
+    ctx.arc(player.x + player.width / 2, player.y + player.height / 2, player.width / 2, 0, Math.PI * 2);
+    ctx.fill();
 }
 
 function drawMaze() {
@@ -479,6 +482,10 @@ function startTimer() {
     timer.intervalId = setInterval(function () {
         timer.seconds--;
         update();
+        if (timer.seconds <= 0) {
+            clearInterval(timer.intervalId);
+            alert("Time's up! Game Over!");
+        }
     }, 1000);
 }
 
@@ -496,6 +503,10 @@ function movePlayer() {
     }
     if (right && !isCollision(player.x + player.speed, player.y)) {
         player.x += player.speed;
+    }
+    if (player.x >= finish.x && player.x <= finish.x + player.width && player.y >= finish.y && player.y <= finish.y + player.height) {
+        clearInterval(timer.intervalId);
+        alert("Congratulations! You reached the end of the maze!");
     }
 }
 
@@ -545,6 +556,7 @@ document.onkeydown = function (e) {
         case 83:
             down = true;
             break;
+
     }
 };
 
